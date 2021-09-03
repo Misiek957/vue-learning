@@ -1,19 +1,22 @@
 <template>
   <div class="container">
     <Header title="Task Tracker"/>
-    <Tasks @delete-task="deleteTask" :tasks="tasks" />
+    <AddTask @add-task="addTask" />
+    <Tasks @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" />
   </div>
 </template>
 
 <script>
-import Header from './components/Header'
-import Tasks from './components/Tasks'
+import Header from './components/Header.vue'
+import Tasks from './components/Tasks.vue'
+import AddTask from './components/AddTask.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
-    Tasks
+    Tasks,
+    AddTask,
   },
   data(){
     return {
@@ -21,11 +24,21 @@ export default {
     }
   },
   methods: {
+    addTask(task){
+      this.tasks = [...this.tasks, task] /// (...) spread across current tasks, and add new one at the end
+    },
     deleteTask(id){
       // Loop through task except, want everything back except task id
       if (confirm('Are you sure?')){
         this.tasks = this.tasks.filter((task) => task.id != id)
       }
+    },
+    toggleReminder(id){
+      // console.log(id) // log for inspection of id getting passed through
+      // for each element in tasks, if id matches the id inserted, (...task) leave other data untouched,
+      // and flip reminder 
+      // (forEachIn) => condition ? value if true : value if false
+      this.tasks = this.tasks.map((task) => task.id === id ? {...task, reminder: !task.reminder} : task) // else task untouched
     }
   },
   created(){
